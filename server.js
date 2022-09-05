@@ -6,7 +6,7 @@ const cors = require('cors');
 const app = express();
 app.use(cors());
 const mongoose=require("mongoose");
-const PORT =  3001;
+const PORT = process.env.PORT;
 
 app.use(express.json());
 
@@ -63,6 +63,10 @@ app.get('/books',booksHandler);
 app.post('/books',addBooksHandler);
 app.delete('/deleteBook/:id',deleteBookHandler);
 
+
+app.get('/',(req,res)=>{
+  res.send("hello from home route");
+})
 app.get('/test', (request, response) => {
 
 

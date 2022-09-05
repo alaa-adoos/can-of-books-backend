@@ -8,8 +8,10 @@ app.use(cors());
 const mongoose=require("mongoose");
 const PORT =  3001;
 
-mongoose.connect('mongodb://localhost:27017/Book', {useNewUrlParser: true, useUnifiedTopology: true});
+app.use(express.json());
 
+//mongoose.connect('mongodb://localhost:27017/Book', {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect('mongodb://ALAA:000@ac-k3xv9zl-shard-00-00.j1ydgtg.mongodb.net:27017,ac-k3xv9zl-shard-00-01.j1ydgtg.mongodb.net:27017,ac-k3xv9zl-shard-00-02.j1ydgtg.mongodb.net:27017/?ssl=true&replicaSet=atlas-bul72z-shard-0&authSource=admin&retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true});
 
 const bookSchema=new mongoose.Schema({
 title:String,
@@ -49,7 +51,7 @@ await thirdBook.save();
 
 }
 
- seedData();
+ // seedData();
 
 
 
@@ -58,11 +60,18 @@ await thirdBook.save();
 
 // http://localhost:3001/books
 app.get('/books',booksHandler);
+app.post('/books',addBooksHandler);
+app.delete('/deleteBook/:id',deleteBookHandler);
+
 app.get('/test', (request, response) => {
+
 
   response.send('test request received')
 
 })
+
+
+
 
 function booksHandler(req,res){
   bookModel.find({},(err,result)=>{
@@ -73,9 +82,53 @@ function booksHandler(req,res){
       }
       else
      {
-      console.log(result);
-      res.send(result);
+      
+      res.json(result);
      }
+  })
+}
+
+
+async function addBooksHandler(req,res){
+  //console.log(req.body);
+const{title,description,status}=req.body
+await bookModel.create({
+  title:title,
+  description:description,
+  status:status
+})
+
+bookModel.find({},(err,result)=>{
+  if(err)
+  {
+      console.log(err);
+
+  }
+  else
+ {
+  
+  res.json(result);
+ }
+})
+}
+
+
+function deleteBookHandler(req,res){
+  const bookId=req.params.id;
+  bookModel.deleteOne({_id:bookId},(err,result)=>{
+    bookModel.find({},(err,result)=>{
+      if(err)
+      {
+          console.log(err);
+    
+      }
+      else
+     {
+      
+      res.json(result);
+     }
+    })
+
   })
 }
 

@@ -57,10 +57,11 @@ await thirdBook.save();
 
 
 
-
+//routes
 // http://localhost:3001/books
 app.get('/books',booksHandler);
 app.post('/books',addBooksHandler);
+app.put('/updateBook/:id',updateBookHandler);
 app.delete('/deleteBook/:id',deleteBookHandler);
 
 
@@ -114,6 +115,23 @@ bookModel.find({},(err,result)=>{
   res.json(result);
  }
 })
+}
+
+
+function updateBookHandler(req,res){
+const id= req.params.id;
+const {title,description,status}=req.body;
+bookModel.findByIdAndUpdate(id,{title,description,status},(err,result)=>{
+if(err){
+  console.log(err)
+}
+else{
+  res.send(result);
+}
+
+})
+
+
 }
 
 
